@@ -121,7 +121,8 @@ function getWeatherDetails(code) {
 // --- 4. WEATHER & FORECAST FUNCTIONS ---
 async function fetchWeather(city) {
     try {
-       const res = await fetch(`http://192.168.x.x:3000/api/mindoro-search?q=${encodeURIComponent(query)}`);
+        // Gumagamit na ito ng window.location.origin para awtomatikong makuha ang tamang host/IP
+        const res = await fetch(`${window.location.origin}/api/weather?city=${encodeURIComponent(city)}`);
         const data = await res.json();
         if (res.status !== 200) return;
 
@@ -173,6 +174,83 @@ async function fetchWeather(city) {
         }
     } catch (err) {
         console.error("Fetch error sa dashboard:", err);
+    }
+}
+
+async function searchBarangays() {
+    const inputEl = document.getElementById('barangaySearchInput');
+    const query = inputEl ? inputEl.value.trim() : "";
+    const grid = document.getElementById('radarGrid');
+    
+    if (!grid) return;
+    
+    grid.innerHTML = `<p style="color: var(--muted-color); grid-column: 1/-1; text-align: center;">Naglo-load ng 7-day forecast sa Oriental Mindoro...</p>`;
+
+    try {
+        // Gumagamit na rin ito ng window.location.origin para sa radar / mindoro-search
+        const res = await fetch(`${window.location.origin}/api/mindoro-search?q=${encodeURIComponent(query)}`);
+        const locations = await res.json();
+        
+        grid.innerHTML = "";
+        
+        if (locations.length === 0) {
+            grid.innerHTML = `<p style="color: var(--muted-color); grid-column: 1/-1; text-align: center;">Walang nakitang lokasyon.</p>`;
+            return;
+        }
+
+        locations.forEach(loc => {
+            const currentWeather = getWeatherDetails(loc.current.weather_code);
+            
+            let weeklyHtml = '';
+            if (loc.daily && loc.daily.time) {
+                const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                
+                weeklyHtml = `<div style="margin-top: 12px; border-top: 1px solid var(--border-color); padding-top: 8px;">
+                                <div style="font-size: 11px; color: var(--muted-color); margin-bottom: 6px; font-weight: bold;">7-Day Forecast:</div>
+                                <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center;">`;
+                
+                loc.daily.time.forEach((dateStr, index) => {
+                    const dateObj = new Date(dateStr);
+                    const dayName = daysOfWeek[dateObj.getDay()];
+                    const code = loc.daily.weather_code[index];
+                    const dayWeather = getWeatherDetails(code);
+                    const maxTemp = Math.round(loc.daily.temperature_2m_max[index]);
+
+                    weeklyHtml += `
+                        <div style="background: rgba(128,128,128,0.05); padding: 4px 2px; border-radius: 6px;">
+                            <div style="font-size: 9px; color: var(--muted-color); text-transform: uppercase;">${dayName}</div>
+                            <div style="font-size: 14px; margin: 2px 0;" title="${dayWeather.desc}">${dayWeather.icon}</div>
+                            <div style="font-size: 10px; font-weight: bold;">${maxTemp}°</div>
+                        </div>
+                    `;
+                });
+
+                weeklyHtml += `</div></div>`;
+            }
+
+            const card = document.createElement('div');
+            card.className = "weather-card glass-panel";
+            card.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span class="badge-mini">${loc.municipality}</span>
+                    <span style="font-size: 12px; color: #60a5fa;">${currentWeather.icon} ${currentWeather.desc}</span>
+                </div>
+                <h4 style="margin: 8px 0 2px 0;">${loc.name}</h4>
+                <small style="color: var(--muted-color);">${loc.province}</small>
+                <div style="display: flex; align-items: baseline; gap: 10px; margin: 8px 0;">
+                    <p style="font-size: 1.8rem; font-weight: bold; margin: 0;">${Math.round(loc.current.temperature_2m)}°C</p>
+                </div>
+                <div style="font-size: 11px; color: var(--muted-color);">
+                    <span>Hangin: ${loc.current.wind_speed_10m} km/h</span> | 
+                    <span>Humidity: ${loc.current.relative_humidity_2m}%</span>
+                </div>
+                ${weeklyHtml}
+            `;
+            grid.appendChild(card);
+        });
+    } catch (err) {
+        console.error("Error fetching Mindoro locations:", err);
+        grid.innerHTML = `<p style="color: #fca5a5; grid-column: 1/-1; text-align: center;">Nabigong makuha ang weather data.</p>`;
     }
 }
 
