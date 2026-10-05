@@ -121,7 +121,7 @@ function getWeatherDetails(code) {
 // --- 4. WEATHER & FORECAST FUNCTIONS ---
 async function fetchWeather(city) {
     try {
-        const res = await fetch(`http://localhost:3000/api/weather?city=${encodeURIComponent(city)}`);
+       const res = await fetch(`http://192.168.x.x:3000/api/mindoro-search?q=${encodeURIComponent(query)}`);
         const data = await res.json();
         if (res.status !== 200) return;
 
