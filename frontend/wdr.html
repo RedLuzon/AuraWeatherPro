@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraWeather Pro</title>
+    <link rel="stylesheet" href="wdr.css">
+</head>
+<body class="dark-mode">
+
+    <div class="loader" id="loader">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">LOADING AURA WEATHER....</div>
+    </div>
+    
+    <header class="navbar glass-panel">
+        <div class="logo">
+            <span class="icon">⛅</span>
+            <div><strong>AuraWeather</strong> <small>PRO EDITION</small></div>
+        </div>
+    <nav class="nav-links">
+    <button onclick="switchView('welcome')" class="nav-btn active" title="Welcome">🏠<span class="btn-text">Welcome</span></button>
+    <button onclick="switchView('dashboard')" class="nav-btn" title="Dashboard">📊<span class="btn-text">Dashboard</span></button>
+    <button onclick="switchView('radar')" class="nav-btn" title="City Radar">🛰️<span class="btn-text">Radar</span></button>
+    <button onclick="switchView('chat')" class="nav-btn" title="Live Support">💬<span class="btn-text">Chat</span></button>
+    <button onclick="switchView('adminUsers')" class="nav-btn" id="adminUsersNavBtn" style="display: none;" title="Admin Users">🛡️<span class="btn-text">Admin</span></button>
+    <button onclick="toggleTheme()" class="nav-btn theme-toggle-btn" title="Toggle Dark/Light Mode">🌙/☀️</button>
+</nav>
+    </header>
+
+    <main class="main-container">
+        
+        <!-- WELCOME VIEW -->
+        <section id="welcome-view" class="view-section active">
+            <div class="hero-grid">
+                <div class="hero-content">
+                    <span class="badge">NEXT-GEN METEOROLOGY</span>
+                    <h1>Experience the Atmosphere with Absolute Clarity.</h1>
+                    <p>Welcome to AuraWeather Pro, an enterprise-grade meteorological intelligence platform delivering real-time hyper-local forecasts and provincial radar tracking.</p>
+                    
+                    <div style="margin-bottom: 25px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="glass-panel" style="padding: 14px; font-size: 13px;">
+                            <strong style="color: #60a5fa; display: block; margin-bottom: 6px;">🛰️ Precision Radar</strong>
+                            <span style="color: var(--muted-color); font-size: 12px;">Real-time tracking across municipalities and barangays.</span>
+                        </div>
+                        <div class="glass-panel" style="padding: 14px; font-size: 13px;">
+                            <strong style="color: #60a5fa; display: block; margin-bottom: 6px;">⚡ Advanced Analytics</strong>
+                            <span style="color: var(--muted-color); font-size: 12px;">High-frequency meteorological data streaming.</span>
+                        </div>
+                    </div>
+
+                    <div class="hero-buttons">
+                        <button onclick="switchView('dashboard')" class="btn-primary">Get Started Now →</button>
+                        <button onclick="switchView('radar')" class="btn-secondary">Explore Cities</button>
+                    </div>
+                    <div class="stats-row">
+                        <div><strong>99.8%</strong><small>Forecast Accuracy</small></div>
+                        <div><strong>10M+</strong><small>Global Data Points</small></div>
+                        <div><strong>&lt;0.1s</strong><small>Response Speed</small></div>
+                    </div>
+                </div>
+                <div class="hero-preview-card glass-panel">
+                    <h3>Calapan City</h3>
+                    <p class="sub">Scattered Thunderstorms</p>
+                    <div class="preview-temp">29°C</div>
+                    <div class="alert-box">🌧️ Precipitation Warning: 85% chance of rain in the next 2 hours.</div>
+                    <div class="preview-metrics">
+                        <span>Wind: 18 km/h</span>
+                        <span>Humidity: 82%</span>
+                        <span>Pressure: 1012 hPa</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DASHBOARD VIEW -->
+        <section id="dashboard-view" class="view-section">
+            <div class="search-bar-container" style="margin-bottom: 20px;">
+                <input type="text" id="cityInput" placeholder="Search for places ...">
+                <button id="searchBtn">Search</button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 320px 1fr; gap: 30px; align-items: start;">
+                <div class="glass-panel" style="display: flex; flex-direction: column; gap: 20px; padding: 25px;">
+                    <div style="display: flex; align-items: center; justify-content: center; font-size: 5rem; margin: 10px 0;">☀️</div>
+                    <div>
+                        <h1 id="temperature" style="font-size: 3.5rem; margin: 0; font-weight: 700;">12°C</h1>
+                        <p id="currentDate" style="color: var(--muted-color); font-size: 13px; margin-top: 5px;"></p>
+                    </div>
+                    <div style="border-top: 1px solid var(--border-color); padding-top: 15px; display: flex; flex-direction: column; gap: 10px;">
+                        <div style="display: flex; align-items: center; gap: 10px; font-size: 14px;">
+                            <span>☁️</span> <span id="weatherCondition">Mostly Cloudy</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px; font-size: 14px;">
+                            <span>🌧️</span> <span>Rain - 30%</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 10px; position: relative; border-radius: 12px; overflow: hidden; height: 110px; background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=500&q=80') center/cover no-repeat; display: flex; align-items: flex-end; padding: 12px;">
+                        <span id="cityName" style="color: white; font-weight: 600; font-size: 13px; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">Calapan City, Mimaropa</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 25px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; gap: 20px; font-weight: 600; font-size: 15px;">
+                            <span style="color: var(--muted-color);">Today</span>
+                            <span style="border-bottom: 2px solid #3b82f6; padding-bottom: 4px;">Week</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 4px 10px; font-size: 12px; font-weight: bold;">°C</div>
+                            <div style="width: 35px; height: 35px; border-radius: 50%; background: #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; color: white;">JL</div>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel" style="padding: 20px;">
+                        <div id="dashboardWeeklyGrid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; text-align: center;"></div>
+                    </div>
+
+                    <div>
+                        <h3 style="margin-bottom: 15px; font-size: 1.1rem;">Today's Highlights</h3>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                            <div class="glass-panel widget" style="padding: 20px;">
+                                <small style="color: var(--muted-color);">UV Index</small>
+                                <div style="font-size: 2.2rem; font-weight: bold; margin: 15px 0 5px 0; text-align: center;" id="uvIndex">5</div>
+                                <div style="font-size: 11px; color: var(--muted-color); text-align: center;">Moderate Protection</div>
+                            </div>
+                            <div class="glass-panel widget" style="padding: 20px;">
+                                <small style="color: var(--muted-color);">Wind Status</small>
+                                <div style="font-size: 1.8rem; font-weight: bold; margin: 15px 0 5px 0;" id="windSpeed">7.70 <small style="font-size: 11px;">km/h</small></div>
+                                <div style="font-size: 12px; color: var(--muted-color);">WSW</div>
+                            </div>
+                            <div class="glass-panel widget" style="padding: 20px;">
+                                <small style="color: var(--muted-color);">Sunrise & Sunset</small>
+                                <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px; font-size: 13px;">
+                                    <div>🌅 <strong>6:35 AM</strong></div>
+                                    <div>🌇 <strong>5:42 PM</strong></div>
+                                </div>
+                            </div>
+                            <div class="glass-panel widget" style="padding: 20px;">
+                                <small style="color: var(--muted-color);">Humidity</small>
+                                <div style="font-size: 1.8rem; font-weight: bold; margin: 15px 0 5px 0;" id="humidity">12%</div>
+                                <div style="font-size: 12px; color: var(--muted-color);">Normal 👍</div>
+                            </div>
+                            <div class="glass-panel widget" style="padding: 20px;">
+                                <small style="color: var(--muted-color);">Visibility</small>
+                                <div style="font-size: 1.8rem; font-weight: bold; margin: 15px 0 5px 0;">5.2 <small style="font-size: 11px;">km</small></div>
+                                <div style="font-size: 12px; color: var(--muted-color);">Average 😐</div>
+                            </div>
+                            <div class="glass-panel widget" style="padding: 20px;">
+                                <small style="color: var(--muted-color);">Air Quality</small>
+                                <div style="font-size: 1.8rem; font-weight: bold; margin: 15px 0 5px 0;">105</div>
+                                <div style="font-size: 12px; color: var(--muted-color);">Unhealthy 👎</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RADAR VIEW -->
+        <section id="radar-view" class="view-section">
+            <div class="section-header">
+                <h2>Barangay & Global City Radar</h2>
+                <p>Search a Calapan Barangay or filter global metropolitan areas.</p>
+                <div class="radar-search-box">
+                    <input type="text" id="barangaySearchInput" placeholder="Search Calapan Barangay (e.g. Guinobatan, Lalud)..." onkeyup="searchBarangays()">
+                </div>
+                <div class="filter-pills">
+                    <button class="pill active" onclick="filterRadar('all')">All Global Cities</button>
+                    <button class="pill" onclick="filterRadar('rainy')">Rainy 🌧️</button>
+                    <button class="pill" onclick="filterRadar('sunny')">Sunny ☀️</button>
+                </div>
+            </div>
+            <div id="radarGrid" class="grid-cards"></div>
+        </section>
+
+        <section id="chat-view" class="view-section">
+            <div class="glass-panel" style="max-width: 850px; margin: 0 auto; padding: 25px;">
+                
+                <!-- Messenger Header Style -->
+                <div class="messenger-header">
+                    <div class="messenger-avatar">
+                        JL
+                        <div class="online-dot"></div>
+                    </div>
+                    <div style="flex: 1;">
+                        <h3 style="margin: 0; font-size: 1.1rem;">Jared C. Luzon <span style="font-size: 11px; color: #31a24c; font-weight: normal;">● Active Now</span></h3>
+                        <small style="color: var(--muted-color);">AuraWeather Official Support Chat</small>
+                    </div>
+                    <button onclick="toggleAdminMode()" id="adminToggleBtn" class="btn-secondary" style="font-size: 11px; padding: 6px 12px;">🔐 Admin Mode</button>
+                </div>
+
+                <div id="adminNotice" style="display: none; background: rgba(0, 132, 255, 0.15); border: 1px solid #0084ff; padding: 10px 15px; border-radius: 8px; margin-bottom: 12px; font-size: 13px; color: #60a5fa;">
+                    ⚡ <strong>Admin Mode Active:</strong> Sumasagot ka ngayon bilang Developer sa mga user.
+                </div>
+
+                <!-- Chat Box Messages Container -->
+                <div id="chatMessagesBox"></div>
+
+                <!-- Messenger Input Bar Style -->
+                <div style="display: flex; gap: 10px; margin-top: 15px; align-items: center;">
+                    <input type="text" id="chatInput" placeholder="Aa Type a message..." style="flex: 1; border-radius: 20px; padding: 12px 18px;" onkeypress="if(event.key==='Enter') sendChatMessage()">
+                    <button onclick="sendChatMessage()" class="btn-primary" style="border-radius: 50px; padding: 12px 20px;">Send ➔</button>
+                </div>
+            </div>
+        </section>
+
+      <!-- CHAT AUTH VIEW (Sign In & Create Account Tabs) -->
+        <section id="chat-auth-view" class="view-section">
+            <div class="glass-panel" style="max-width: 450px; margin: 40px auto; padding: 30px;">
+                <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                    <button onclick="switchAuthTab('signin')" id="tabSignInBtn" class="btn-primary" style="flex: 1; padding: 8px;">Sign In</button>
+                    <button onclick="switchAuthTab('signup')" id="tabSignUpBtn" class="btn-secondary" style="flex: 1; padding: 8px;">Create Account</button>
+                </div>
+
+                <!-- SIGN IN FORM -->
+                <div id="signInFormContainer">
+                    <h2 style="margin-bottom: 10px; text-align: center;">🔐 Mag-sign In</h2>
+                    <p style="color: var(--muted-color); font-size: 13px; margin-bottom: 20px; text-align: center;">Ilagay ang iyong mga detalye para makapag-chat.</p>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        <div>
+                            <label style="font-size: 12px; color: var(--muted-color);">Username:</label>
+                            <input type="text" id="signInUsername" placeholder="Ilagay ang username..." style="width: 100%; margin-top: 5px;">
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; color: var(--muted-color);">Password:</label>
+                            <input type="password" id="signInPassword" placeholder="Ilagay ang password..." style="width: 100%; margin-top: 5px;">
+                        </div>
+                        <button onclick="handleSignIn()" class="btn-primary" style="width: 100%; margin-top: 10px;">Mag-sign In →</button>
+                    </div>
+                </div>
+
+                <!-- CREATE ACCOUNT FORM -->
+                <div id="signUpFormContainer" style="display: none;">
+                    <h2 style="margin-bottom: 10px; text-align: center;">📝 Gumawa ng Account</h2>
+                    <p style="color: var(--muted-color); font-size: 13px; margin-bottom: 20px; text-align: center;">Magrehistro bago makapagsimula.</p>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        <div>
+                            <label style="font-size: 12px; color: var(--muted-color);">Email Address:</label>
+                            <input type="email" id="signUpEmail" placeholder="example@email.com" style="width: 100%; margin-top: 5px;">
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; color: var(--muted-color);">Username:</label>
+                            <input type="text" id="signUpUsername" placeholder="Piliin ang username..." style="width: 100%; margin-top: 5px;">
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; color: var(--muted-color);">Password:</label>
+                            <input type="password" id="signUpPassword" placeholder="Gumawa ng password..." style="width: 100%; margin-top: 5px;">
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; color: var(--muted-color);">Uri ng Account (Role):</label>
+                            <select id="signUpRole" style="width: 100%; padding: 12px 16px; background: var(--input-bg); border: 1px solid #3b82f6; border-radius: 10px; color: var(--text-color); margin-top: 5px; outline: none;">
+                                <option value="user">User / Customer</option>
+                                <option value="admin">Admin / Support Developer</option>
+                            </select>
+                        </div>
+                        <button onclick="handleCreateAccount()" class="btn-primary" style="width: 100%; margin-top: 10px;">I-register ang Account →</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHAT VIEW (Makikita lang kapag naka-login na) -->
+        <section id="chat-view" class="view-section">
+            <div class="glass-panel" style="max-width: 850px; margin: 0 auto; padding: 25px;">
+                <div class="messenger-header">
+                    <div class="messenger-avatar">
+                        <span id="currentUserAvatarInitials">U</span>
+                        <div class="online-dot"></div>
+                    </div>
+                    <div style="flex: 1;">
+                        <h3 style="margin: 0; font-size: 1.1rem;"><span id="currentLoggedInName">User</span> <span style="font-size: 11px; color: #31a24c; font-weight: normal;">● Active Now</span></h3>
+                        <small style="color: var(--muted-color);" id="currentUserRoleBadge">Role: User</small>
+                    </div>
+                    <button onclick="handleLogout()" class="btn-secondary" style="font-size: 11px; padding: 6px 12px; border-color: #ef4444; color: #ef4444;">🚪 Mag-logout</button>
+                </div>
+
+                <div id="adminNotice" style="display: none; background: rgba(0, 132, 255, 0.15); border: 1px solid #0084ff; padding: 10px 15px; border-radius: 8px; margin-bottom: 12px; font-size: 13px; color: #60a5fa;">
+                    ⚡ <strong>Admin Protection Active:</strong> Ikaw ay nakapasok bilang Admin. Ligtas ang iyong sesyon.
+                </div>
+
+                <div id="chatMessagesBox"></div>
+
+                <div style="display: flex; gap: 10px; margin-top: 15px; align-items: center;">
+                    <input type="text" id="chatInput" placeholder="Aa Type a message..." style="flex: 1; border-radius: 20px; padding: 12px 18px;" onkeypress="if(event.key==='Enter') sendChatMessage()">
+                    <button onclick="sendChatMessage()" class="btn-primary" style="border-radius: 50px; padding: 12px 20px;">Send ➔</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ADMIN ONLY USERS MANAGEMENT PAGE -->
+        <section id="admin-users-view" class="view-section">
+            <div class="glass-panel" style="max-width: 950px; margin: 0 auto; padding: 30px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 20px;">
+                    <div>
+                        <h2 style="margin: 0; font-size: 1.5rem;">🛡️ Admin Security & Users Logged-In</h2>
+                        <p style="color: var(--muted-color); font-size: 13px; margin: 5px 0 0 0;">Listahan ng lahat ng rehistradong user at admin sa sistema.</p>
+                    </div>
+                    <button onclick="clearAllRegisteredUsers()" class="btn-secondary" style="font-size: 11px; border-color: #ef4444; color: #ef4444;">Clear All Users</button>
+                </div>
+                
+                <div id="registeredUsersTableContainer" style="overflow-x: auto;">
+                    <!-- Dito i-render ang listahan ng users -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="glass-panel" style="max-width: 1200px; margin: 40px auto 20px auto; padding: 25px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+        <div>
+            <strong style="display: block; font-size: 15px; color: var(--text-color); margin-bottom: 4px;">AuraWeather Pro Edition</strong>
+            <small style="color: var(--muted-color);">Advanced Meteorological Intelligence System © 2026. All Rights Reserved.</small>
+        </div>
+        <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <a href="mailto:ilagay_ang_email_mo_dito@gmail.com" style="color: var(--muted-color); text-decoration: none; font-size: 13px; font-weight: 600;">📧 Email</a>
+            <a href="https://facebook.com/ilagay_ang_fb_mo" target="_blank" style="color: var(--muted-color); text-decoration: none; font-size: 13px; font-weight: 600;">👥 Facebook</a>
+            <a href="https://github.com/ilagay_ang_github_mo" target="_blank" style="color: var(--muted-color); text-decoration: none; font-size: 13px; font-weight: 600;">🐱 GitHub</a>
+            <a href="https://linkedin.com/in/ilagay_ang_linkedin_mo" target="_blank" style="color: var(--muted-color); text-decoration: none; font-size: 13px; font-weight: 600;">💼 LinkedIn</a>
+        </div>
+    </footer>
+
+    <script src="wdr_frontend.js"></script>
+</body>
+</html>
